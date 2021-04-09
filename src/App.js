@@ -1,37 +1,89 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import axios from 'axios';
 import SearchBar from './components/searchBar/SearchBar';
 import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
+import ForecastTab from './pages/forecastTab/ForecastTab';
+import TodayTab from "./pages/todayTab/TodayTab";
+import kelvinToCelcius from './helpers/kelvinToCelcius';
 import './App.css';
 
-function App() {
+
+    function App() {
+
+      const [weatherData, setWeatherData] = useState(null);
+      const [location, setLocation] = useState('');
+      const [error, setError] = useState(false);
+      const [loading, toggleLoading] = useState(false);
+
+      useEffect(() => {
+        async function fetchData() {
+        try {
+          const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${process.env.REACT_APP_API_KEY}&lang=nl`);
+          setWeatherData(result.data);
+          toggleLoading(false);
+        } catch (e) {
+          console.error(e);
+          setError(true);
+          toggleLoading(false);
+        }
+      }
+        if (location) {
+          fetchData();
+        }
+
+      }, [location]);
+
   return (
     <>
       <div className="weather-container">
 
         {/*HEADER -------------------- */}
         <div className="weather-header">
-          <SearchBar/>
+          <SearchBar setLocationHandler={setLocation} />
+
+          {error && (
+              <span className="wrong-location-error">
+      Oeps! Deze locatie bestaat niet
+      </span>
+          )}
 
           <span className="location-details">
-            <h2>Bewolkt</h2>
-            <h3> </h3>
-            <h1>14 &deg;</h1>
+            {loading && (<span>Loading...</span>)}
 
-            <button type="button">
-              Haal data op!
-            </button>
+            {weatherData &&
+            <>
+              <h2>{weatherData.weather[0].description}</h2>
+              <h3>{weatherData.name}</h3>
+              <h1>{kelvinToCelcius(weatherData.main.temp)}</h1>
+            </>
+            }
           </span>
         </div>
 
         {/*CONTENT ------------------ */}
-        <div className="weather-content">
-          <TabBarMenu/>
+        <Router>
+          <div className="weather-content">
 
-          <div className="tab-wrapper">
-            Alle inhoud van de tabbladen komt hier!
+            <TabBarMenu/>
+
+            <div className="tab-wrapper">
+              <Switch>
+                <Route exact path="/">
+                  <TodayTab coordinates={weatherData && weatherData.coord} />
+                </Route>
+                <Route path="/komende-week">
+                  <ForecastTab coordinates={weatherData && weatherData.coord} />
+                </Route>
+              </Switch>
+            </div>
           </div>
-        </div>
+        </Router>
 
         <MetricSlider/>
       </div>
