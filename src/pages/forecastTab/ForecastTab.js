@@ -5,10 +5,10 @@ import createDateString from "../../helpers/createDateString";
 import './ForecastTab.css';
 
 function ForecastTab({coordinates}) {
-    console.log(coordinates);
     const [forecasts, setForecasts] = useState(null);
     const [error, setError] = useState(false);
     const [loading, toggleLoading]= useState(false);
+
     const { kelvinToMetric } = useContext(TempContext);
 
     useEffect(() => {
@@ -32,7 +32,6 @@ function ForecastTab({coordinates}) {
         }
 
     }, [coordinates]);
-
 
     return (
         <div className="tab-wrapper">
