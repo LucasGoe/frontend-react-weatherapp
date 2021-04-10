@@ -21,7 +21,6 @@ function TodayTab({coordinates}) {
 					result.data.hourly[5],
 					result.data.hourly[7],
 				]);
-				console.log(result.data.hourly[3]);
 			} catch (e) {
 				console.error(e);
 				setError(true);
@@ -58,14 +57,7 @@ function TodayTab({coordinates}) {
 			}
 			{error && <span>Er is iets misgegaan met het ophalen van de data.</span>}
 			{loading && (<span>Loading...</span>)}
-			{/*<div className="chart">*/}
-			{/*	Hier komt de chart!*/}
-			{/*</div>*/}
-			{/*<div className="legend">*/}
-			{/*	<span>08:00 uur</span>*/}
-			{/*	<span>12:00 uur</span>*/}
-			{/*	<span>16:00 uur</span>*/}
-			{/*</div>*/}
+
 		</div>
   );
 };

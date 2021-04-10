@@ -19,7 +19,7 @@ function ForecastTab({coordinates}) {
         try {
             const result = await axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates?.lat}&lon=${ coordinates?.lon }&exclude=minutely,current,hourly&appid=${process.env.REACT_APP_API_KEY}&lang=nl`);
             setForecasts(result.data.daily.slice(1, 6));
-            console.log(result.data);
+            toggleLoading(false);
         } catch (e) {
             console.error(e);
             setError(true);
